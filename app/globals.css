@@ -46,6 +46,38 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Habitat Pulse design tokens — ported 1:1 from the shipped app's
+     styles.css. Deliberately dark-only (a field-instrument aesthetic, not
+     a dashboard); doesn't participate in shadcn's light/dark toggle. */
+  --color-habitat-bg: var(--habitat-bg);
+  --color-habitat-surface: var(--habitat-surface);
+  --color-habitat-surface-raised: var(--habitat-surface-raised);
+  --color-habitat-hairline: var(--habitat-hairline);
+  --color-habitat-ink: var(--habitat-ink);
+  --color-habitat-ink-muted: var(--habitat-ink-muted);
+  --color-habitat-ink-faint: var(--habitat-ink-faint);
+  --color-habitat-mint: var(--habitat-mint);
+  --color-habitat-amber: var(--habitat-amber);
+  --color-habitat-coral: var(--habitat-coral);
+  --color-habitat-focus: var(--habitat-focus);
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-habitat-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-habitat-mono: var(--font-ibm-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+}
+
+:root {
+  --habitat-bg: #0e1b17;
+  --habitat-surface: #16261f;
+  --habitat-surface-raised: #1c3128;
+  --habitat-hairline: rgba(159, 199, 182, 0.16);
+  --habitat-ink: #eaf2ec;
+  --habitat-ink-muted: #9fc7b6;
+  --habitat-ink-faint: #6c8b7d;
+  --habitat-mint: #6ee7b7;
+  --habitat-amber: #f4b860;
+  --habitat-coral: #ff6b5b;
+  --habitat-focus: #ffe08a;
 }
 
 :root {

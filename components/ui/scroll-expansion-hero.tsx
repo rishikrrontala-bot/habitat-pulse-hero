@@ -28,6 +28,16 @@ interface ScrollExpandMediaProps {
   scrollToExpand?: string;
   textBlend?: boolean;
   children?: ReactNode;
+  /**
+   * Skip the scroll-scrub entirely and mount already fully expanded, with
+   * children already visible. For a consumer whose `children` show content
+   * tied to the current URL (e.g. a deep-linked search result) — without
+   * this, that content renders correctly but sits at `opacity: 0` behind an
+   * unexpanded hero until someone scrolls, which silently hides data a
+   * visitor followed a direct link specifically to see. Not part of the
+   * original component; added because integrating it exposed the gap.
+   */
+  startExpanded?: boolean;
 }
 
 const ScrollExpandMedia = ({
@@ -40,19 +50,21 @@ const ScrollExpandMedia = ({
   scrollToExpand,
   textBlend,
   children,
+  startExpanded = false,
 }: ScrollExpandMediaProps) => {
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
-  const [showContent, setShowContent] = useState<boolean>(false);
-  const [mediaFullyExpanded, setMediaFullyExpanded] = useState<boolean>(false);
+  const [scrollProgress, setScrollProgress] = useState<number>(startExpanded ? 1 : 0);
+  const [showContent, setShowContent] = useState<boolean>(startExpanded);
+  const [mediaFullyExpanded, setMediaFullyExpanded] = useState<boolean>(startExpanded);
   const [touchStartY, setTouchStartY] = useState<number>(0);
   const [isMobileState, setIsMobileState] = useState<boolean>(false);
 
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setScrollProgress(0);
-    setShowContent(false);
-    setMediaFullyExpanded(false);
+    setScrollProgress(startExpanded ? 1 : 0);
+    setShowContent(startExpanded);
+    setMediaFullyExpanded(startExpanded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mediaType]);
 
   useEffect(() => {
