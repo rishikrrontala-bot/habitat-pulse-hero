@@ -1,15 +1,20 @@
 /**
  * SiteHeader.tsx — the masthead nav from the shipped app's index.html,
- * ported to React. Links point at the real shipped repo's docs, since
- * this sandbox project doesn't duplicate those markdown files.
+ * ported to React, now pointing at this repo (the actual submission) and
+ * its own copied docs, plus the real logo.
  */
-const REPO = "https://github.com/rishikrrontala-bot/habitat-pulse";
+import Image from "next/image";
+
+const REPO = "https://github.com/rishikrrontala-bot/habitat-pulse-hero";
 
 export default function SiteHeader() {
   return (
     <header className="flex items-baseline justify-between gap-4 mb-10 flex-wrap">
-      <a href="#" className="font-[family-name:var(--font-display)] font-semibold text-[22px] tracking-[0.01em] text-habitat-ink no-underline">
-        Habitat<span className="text-habitat-mint">Pulse</span>
+      <a href="#" className="flex items-center gap-2 no-underline">
+        <Image src="/branding/logo.png" alt="" width={28} height={28} className="rounded-[7px]" priority />
+        <span className="font-[family-name:var(--font-display)] font-semibold text-[22px] tracking-[0.01em] text-habitat-ink">
+          Habitat<span className="text-habitat-mint">Pulse</span>
+        </span>
       </a>
       <nav aria-label="Project links" className="flex gap-5">
         <a href={`${REPO}/blob/main/docs/METHODOLOGY.md`} target="_blank" rel="noopener" className="text-habitat-ink-muted text-sm no-underline hover:text-habitat-ink">

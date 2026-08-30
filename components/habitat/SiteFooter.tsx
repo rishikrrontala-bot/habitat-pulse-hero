@@ -1,8 +1,9 @@
 /**
  * SiteFooter.tsx — the attribution footer from the shipped app's
- * index.html, ported to React.
+ * index.html, ported to React, now pointing at this repo (the actual
+ * submission) and its own copied docs.
  */
-const REPO = "https://github.com/rishikrrontala-bot/habitat-pulse";
+const REPO = "https://github.com/rishikrrontala-bot/habitat-pulse-hero";
 
 export default function SiteFooter() {
   return (
