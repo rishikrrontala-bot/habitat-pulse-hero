@@ -10,11 +10,17 @@ describe("shouldStartExpanded", () => {
     expect(shouldStartExpanded({ prefersReducedMotion: true, hasDeepLink: false })).toBe(true);
   });
 
-  test("a deep link starts expanded so the linked result is visible immediately", () => {
-    expect(shouldStartExpanded({ prefersReducedMotion: false, hasDeepLink: true })).toBe(true);
+  // Regression guard. Deep links WERE made to start expanded, on the theory
+  // that a shared result should be visible without scrubbing. In practice it
+  // dropped the visitor onto a full-screen hero image (the end of the
+  // animation) with the data still ~1500px below the fold — it read as
+  // broken and denied shared links the intro everyone else gets. Deep links
+  // now get the normal experience; the data is loaded and waiting underneath.
+  test("a deep link does NOT start expanded — it gets the normal intro", () => {
+    expect(shouldStartExpanded({ prefersReducedMotion: false, hasDeepLink: true })).toBe(false);
   });
 
-  test("both at once still starts expanded", () => {
+  test("reduced motion still wins even when a deep link is present", () => {
     expect(shouldStartExpanded({ prefersReducedMotion: true, hasDeepLink: true })).toBe(true);
   });
 });
@@ -40,9 +46,10 @@ describe("shouldEnableScrollScrub", () => {
     expect(shouldEnableScrollScrub(ctx)).toBe(false);
   });
 
-  test("a deep link starts expanded but KEEPS the scrub — it implies no motion preference", () => {
-    const ctx = { prefersReducedMotion: false, hasDeepLink: true };
-    expect(shouldStartExpanded(ctx)).toBe(true);
-    expect(shouldEnableScrollScrub(ctx)).toBe(true);
+  test("a deep link is treated exactly like a normal visit — collapsed, scrub on", () => {
+    const deepLink = { prefersReducedMotion: false, hasDeepLink: true };
+    const normal = { prefersReducedMotion: false, hasDeepLink: false };
+    expect(shouldStartExpanded(deepLink)).toBe(shouldStartExpanded(normal));
+    expect(shouldEnableScrollScrub(deepLink)).toBe(shouldEnableScrollScrub(normal));
   });
 });

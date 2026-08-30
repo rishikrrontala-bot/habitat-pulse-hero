@@ -70,6 +70,9 @@ export default function HabitatApp() {
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resultsRef = useRef<HTMLDivElement | null>(null);
+  // True until the first results render. Distinguishes "data arrived from a
+  // deep link on page load" from "the visitor just searched".
+  const isInitialLoadRef = useRef(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const loadLocation = useCallback(async (loc: SelectedLocation) => {
@@ -142,9 +145,16 @@ export default function HabitatApp() {
   /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
-    if (resultsVisible && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!resultsVisible || !resultsRef.current) return;
+    // Only scroll for searches the visitor performs on the page. On an
+    // initial deep-link load the hero is still collapsed and holding the
+    // scroll position on purpose — jumping the page out from under the
+    // intro would break the very animation the link is meant to show.
+    if (isInitialLoadRef.current) {
+      isInitialLoadRef.current = false;
+      return;
     }
+    resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [resultsVisible, location]);
 
   const closeSuggestions = useCallback(() => {

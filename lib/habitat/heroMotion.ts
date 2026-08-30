@@ -22,14 +22,20 @@ export interface HeroMotionContext {
  * Whether the hero should mount already fully expanded, with its content
  * visible immediately.
  *
- * - Reduced motion: yes — the expand animation is the thing being opted out
- *   of, so show its finished state rather than a half-open one.
- * - Deep link: yes — someone followed a link to a specific result; making
- *   them scrub an animation before seeing the data they asked for hides it
- *   behind motion for no reason.
+ * **Reduced motion only.** The expand animation is precisely the thing
+ * being opted out of, so a reduced-motion visitor gets its finished state
+ * rather than a half-open one.
+ *
+ * A deep link (?lat=&lon=) deliberately does NOT start expanded. That was
+ * tried and reverted: mounting expanded drops the visitor straight onto a
+ * full-screen hero image — the *end* of the animation — with the data
+ * still far below the fold. It reads as broken, and it silently denies a
+ * shared link the intro every other visitor gets. Deep links now behave
+ * exactly like a normal visit: the intro plays, and the linked location's
+ * data is already loaded and waiting underneath when it finishes.
  */
-export function shouldStartExpanded({ prefersReducedMotion, hasDeepLink }: HeroMotionContext): boolean {
-  return prefersReducedMotion || hasDeepLink;
+export function shouldStartExpanded({ prefersReducedMotion }: HeroMotionContext): boolean {
+  return prefersReducedMotion;
 }
 
 /**
