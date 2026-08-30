@@ -74,17 +74,29 @@ doesn't know what place you're about to search. Don't wire it to the last
 search's numbers; that would blur a distinction this project otherwise
 draws carefully everywhere else (see the real pulse line, above).
 
-## The scroll-expansion hero doesn't yet respect `prefers-reduced-motion`
+## The hero's motion behavior is a deliberate set of rules, not a default
 
-Known gap, not silently skipped: unlike the intro on the earlier
-[vanilla-JS build](https://github.com/rishikrrontala-bot/habitat-pulse),
-this hero (`components/ui/scroll-expansion-hero.tsx`) scroll-scrubs
-regardless of a visitor's reduced-motion preference. A `?lat=&lon=` deep
-link does start already-expanded (`startExpanded` prop, so a shared result
-is visible immediately without scrubbing), but a first-time visitor with
-`prefers-reduced-motion: reduce` set still gets the full scroll-driven
-expand. Worth fixing before treating this as a permanent replacement for
-the original build's more careful accessibility handling.
+Two independent conditions change how the scroll-expansion hero behaves,
+decided by pure predicates in `lib/habitat/heroMotion.ts` (tested in
+`tests/heroMotion.test.ts`):
+
+- **`prefers-reduced-motion: reduce`** — the hero mounts fully expanded
+  *and* the scroll-scrub is not attached at all. The page scrolls
+  completely normally; the "Scroll to reveal" prompt is hidden, since it
+  would be un-followable.
+- **A `?lat=&lon=` deep link** — the hero mounts fully expanded so a
+  shared/bookmarked result is visible immediately, but the scrub stays
+  enabled, because following a link implies nothing about someone's motion
+  preference.
+
+Those two are deliberately *not* the same predicate, and collapsing them
+into one would reintroduce a real bug: the hero's wheel/touch handlers
+re-collapse a fully-expanded hero when the visitor scrolls up near the top
+of the page, and its scroll handler pins the window to `scrollY` 0 while
+collapsed. A reduced-motion visitor who merely *started* expanded would be
+dragged straight back into the scroll-jacked animation they opted out of.
+Starting expanded is necessary but not sufficient — the handlers must not
+be attached in the first place.
 
 ## This is a snapshot tool, not a monitoring or alerting system
 

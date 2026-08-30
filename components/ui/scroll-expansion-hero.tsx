@@ -38,6 +38,19 @@ interface ScrollExpandMediaProps {
    * original component; added because integrating it exposed the gap.
    */
   startExpanded?: boolean;
+  /**
+   * Skip the scroll-scrub interaction entirely: no wheel/touch capture, no
+   * pinning the window to scrollY 0, no re-collapse. For visitors with
+   * `prefers-reduced-motion: reduce`.
+   *
+   * Deliberately separate from `startExpanded`, because starting expanded
+   * is NOT sufficient on its own: the wheel/touch handlers below
+   * re-collapse a fully-expanded hero when the visitor scrolls up near the
+   * top of the page, which would drag a reduced-motion visitor straight
+   * back into the scroll-jacked animation they opted out of. See
+   * lib/habitat/heroMotion.ts for the two predicates and their tests.
+   */
+  disableScrollScrub?: boolean;
 }
 
 const ScrollExpandMedia = ({
@@ -51,6 +64,7 @@ const ScrollExpandMedia = ({
   textBlend,
   children,
   startExpanded = false,
+  disableScrollScrub = false,
 }: ScrollExpandMediaProps) => {
   const [scrollProgress, setScrollProgress] = useState<number>(startExpanded ? 1 : 0);
   const [showContent, setShowContent] = useState<boolean>(startExpanded);
@@ -68,6 +82,12 @@ const ScrollExpandMedia = ({
   }, [mediaType]);
 
   useEffect(() => {
+    // Reduced motion: attach nothing at all. Returning before any
+    // addEventListener is what makes the page scroll normally — the
+    // handlers below both capture input (preventDefault) and pin the
+    // window to scrollY 0, so merely starting expanded would not be enough.
+    if (disableScrollScrub) return;
+
     const handleWheel = (e: WheelEvent) => {
       if (mediaFullyExpanded && e.deltaY < 0 && window.scrollY <= 5) {
         setMediaFullyExpanded(false);
@@ -167,7 +187,7 @@ const ScrollExpandMedia = ({
       );
       window.removeEventListener('touchend', handleTouchEnd as EventListener);
     };
-  }, [scrollProgress, mediaFullyExpanded, touchStartY]);
+  }, [scrollProgress, mediaFullyExpanded, touchStartY, disableScrollScrub]);
 
   useEffect(() => {
     const checkIfMobile = (): void => {

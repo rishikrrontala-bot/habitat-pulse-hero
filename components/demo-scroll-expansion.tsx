@@ -5,6 +5,11 @@ import ScrollExpandMedia from '@/components/ui/scroll-expansion-hero';
 import SiteHeader from '@/components/habitat/SiteHeader';
 import HabitatApp from '@/components/habitat/HabitatApp';
 import SiteFooter from '@/components/habitat/SiteFooter';
+import {
+  shouldStartExpanded,
+  shouldEnableScrollScrub,
+  type HeroMotionContext,
+} from '@/lib/habitat/heroMotion';
 
 // Real, verified Unsplash photos (checked for both reachability and actual
 // subject matter before use — see the conversation this was built in).
@@ -14,33 +19,43 @@ const HERO_IMAGE =
   'https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1280&auto=format&fit=crop'; // elephant in dark forest
 
 export default function HabitatPulseScrollHero() {
-  // A deep link (?lat=&lon=&name=, e.g. a shared/bookmarked result) means
-  // HabitatApp will load and render real data immediately — start the hero
-  // already expanded so that data is actually visible right away, instead
-  // of sitting at opacity:0 behind an unscrolled hero. `null` until the
-  // client-only check runs, so the very first render (server + first
-  // paint) always matches the default collapsed state and avoids a
-  // hydration mismatch.
-  const [startExpanded, setStartExpanded] = useState<boolean | null>(null);
+  // Two independent questions, answered by pure predicates in
+  // lib/habitat/heroMotion.ts (with tests):
+  //   - should the hero mount already expanded?  (deep link OR reduced motion)
+  //   - should the scroll-scrub run at all?      (NOT reduced motion)
+  // They are not the same question — see heroMotion.ts for why collapsing
+  // them into one reintroduces a real accessibility bug.
+  //
+  // `null` until the client-only check runs, so the first render (server +
+  // first paint) is deterministic and can't cause a hydration mismatch.
+  const [motion, setMotion] = useState<HeroMotionContext | null>(null);
 
-  /* eslint-disable react-hooks/set-state-in-effect --
-   * Reading window.location for a deep-link check genuinely requires an
-   * effect: there's no window during server rendering, and this must run
-   * once, client-side, on mount. Syncing from an external source (the
-   * URL), not deriving state that could be computed from props. */
+  // Reading window.location and window.matchMedia genuinely requires an
+  // effect: neither exists during server rendering, and both must be read
+  // client-side on mount. This syncs from external sources (the URL and an
+  // OS accessibility setting) via a subscription callback — the shape
+  // react-hooks/set-state-in-effect actually wants — rather than deriving
+  // state that could have been computed from props.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const hasDeepLink = params.has('lat') && params.has('lon');
-    setStartExpanded(hasDeepLink);
-    if (!hasDeepLink) window.scrollTo(0, 0);
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const sync = () => setMotion({ prefersReducedMotion: mq.matches, hasDeepLink });
+    sync();
+
+    // Respect the preference being toggled mid-session, not just at load.
+    mq.addEventListener('change', sync);
+
+    if (!hasDeepLink && !mq.matches) window.scrollTo(0, 0);
+    return () => mq.removeEventListener('change', sync);
   }, []);
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Same background color as the hero itself, both before and after this
   // resolves — a plain `null` here would flash blank (server HTML has no
   // window to check) for every visitor, not just deep links, for the one
   // render between hydration and this effect running.
-  if (startExpanded === null) return <div className="min-h-screen bg-black" />;
+  if (motion === null) return <div className="min-h-screen bg-black" />;
 
   return (
     <div className="min-h-screen bg-black">
@@ -50,9 +65,14 @@ export default function HabitatPulseScrollHero() {
         bgImageSrc={BG_IMAGE}
         title="Every Place Has A Pulse"
         date="Somewhere, right now"
-        scrollToExpand="Scroll to reveal the signal"
+        // Under reduced motion the hero is already open, so a "Scroll to
+        // reveal" instruction would be both wrong and un-followable.
+        scrollToExpand={
+          motion.prefersReducedMotion ? undefined : 'Scroll to reveal the signal'
+        }
         textBlend
-        startExpanded={startExpanded}
+        startExpanded={shouldStartExpanded(motion)}
+        disableScrollScrub={!shouldEnableScrollScrub(motion)}
       >
         <div className="max-w-[920px] mx-auto w-full px-2 md:px-4">
           <SiteHeader />
