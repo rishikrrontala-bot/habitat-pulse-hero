@@ -66,13 +66,17 @@ encode anything the cards don't already say in words — it's there so the
 state of a place is legible at a glance, with the caption underneath so
 nothing is color-only.
 
-## The scroll-expansion hero's waveform (icon/branding) is decorative
+## The logo's pulse line is branding, not data
 
-The location-pin-on-a-pulse-line motif in the logo and in the hero's own
-branding is never derived from air-quality, weather, or species data — it
-doesn't know what place you're about to search. Don't wire it to the last
-search's numbers; that would blur a distinction this project otherwise
-draws carefully everywhere else (see the real pulse line, above).
+The logo (a location pin sitting on a pulse line, in the header and as the
+favicon) is fixed artwork. Unlike the real pulse line above the search
+results, it is never derived from air-quality, weather, or species data —
+it's identical on every page load and doesn't know what place you're about
+to search. Don't wire it to the last search's numbers; that would blur a
+distinction this project otherwise draws carefully everywhere else.
+
+The hero image itself — an elephant in dense forest — is likewise a
+photograph chosen for the theme, not a visualization of anything.
 
 ## The hero's motion behavior is a deliberate set of rules, not a default
 
