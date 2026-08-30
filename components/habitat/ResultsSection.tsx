@@ -58,9 +58,9 @@ function buildPulsePath(amplitude: number): string {
   return d;
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
-    <article className="bg-habitat-surface border border-habitat-hairline rounded-[14px] p-5">
+    <article className={`bg-habitat-surface border border-habitat-hairline rounded-[14px] p-5 ${className || ""}`}>
       <h3 className="text-[13px] uppercase tracking-[0.08em] text-habitat-ink-faint mb-3.5">{title}</h3>
       {children}
     </article>
@@ -163,7 +163,7 @@ export default function ResultsSection({ location, locationMeta, weather, air, s
           )}
         </Card>
 
-        <Card title={`Threatened species recorded within ${SPECIES_RADIUS_KM}km`}>
+        <Card title={`Threatened species recorded within ${SPECIES_RADIUS_KM}km`} className="col-span-full">
           {species === null ? (
             <EmptyNote message="GBIF species data unavailable right now — this source didn't respond." />
           ) : species.length === 0 ? (
