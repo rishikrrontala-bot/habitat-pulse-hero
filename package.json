@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:pages": "GITHUB_PAGES=true next build",
+    "build:pages": "GITHUB_PAGES=true next build && touch out/.nojekyll",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy:pages": "bash scripts/deploy-pages.sh"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
