@@ -1,8 +1,8 @@
-# Habitat Pulse — scroll-expansion edition
+<img src="public/branding/logo-wordmark.png" alt="Habitat Pulse" width="560">
 
-**A Next.js/TypeScript/shadcn build of [Habitat Pulse](https://github.com/rishikrrontala-bot/habitat-pulse)** — same real, live data (air quality, weather, and threatened species for any place on Earth), same honest framing, reimagined with a cinematic scroll-expansion hero on top.
+**What's happening, right now, where you stand.** Search any place on Earth for its live air quality, current weather, and threatened species recorded nearby — pulled straight from public APIs, nothing invented, wrapped in a cinematic scroll-expansion hero.
 
-Built for [Hack the Habitat](https://hack-the-habitat-2026.devpost.com/) — "Build tech that protects the planet." The [original vanilla-JS build](https://github.com/rishikrrontala-bot/habitat-pulse) is the primary submission; this is an exploration of the same idea with a shadcn/React component pipeline, kept in a separate repo so neither could break the other.
+Built for [Hack the Habitat](https://hack-the-habitat-2026.devpost.com/) — "Build tech that protects the planet." A [vanilla-JS, zero-dependency build](https://github.com/rishikrrontala-bot/habitat-pulse) of the same idea exists as an earlier iteration; this Next.js/TypeScript/shadcn version, built on top of it with the same real logic ported over rather than re-derived, is the submission.
 
 ## What it does
 
@@ -15,9 +15,9 @@ Scroll through an elephant-in-forest photograph that grows to fill the screen as
 
 No accounts, no API keys, nothing invented. Same rule as the original: if a number isn't real, it doesn't appear.
 
-## Why a separate repo from the same idea
+## Relationship to the original build
 
-The original [habitat-pulse](https://github.com/rishikrrontala-bot/habitat-pulse) is deliberately zero-dependency, zero-build-step vanilla JS — a real, considered constraint, not an oversight (see that repo's `CLAUDE.md`). Rebuilding its hero with a pasted shadcn/React component meant either migrating the shipped, already-verified submission's entire toolchain days before a deadline, or building the same idea in an isolated sandbox instead. This is that sandbox: real Next.js, TypeScript, Tailwind, and shadcn, with the actual app logic ported over (not re-derived) so it isn't just a prettier shell around placeholder text.
+[habitat-pulse](https://github.com/rishikrrontala-bot/habitat-pulse) is a deliberately zero-dependency, zero-build-step vanilla-JS build of the same idea — a real, considered constraint there, not an oversight (see that repo's `CLAUDE.md`). This version started as an experiment layering a shadcn/React scroll-expansion hero on top without risking that build's already-verified toolchain, in its own repo so neither could break the other. It's grown into the actual submission: every real feature (search, live air quality/weather/species data, actions) is ported over from that original — not re-derived, not a prettier shell around placeholder text — with its own test suite covering the same logic.
 
 ## Tech stack
 
