@@ -31,6 +31,18 @@ export default function SiteFooter() {
         </a>
         .
       </p>
+      <p className="mt-3">
+        Built by{" "}
+        <a
+          href="https://github.com/rishikrrontala-bot"
+          target="_blank"
+          rel="noopener"
+          className="text-habitat-ink-muted hover:text-habitat-mint"
+        >
+          Rishik Rontala
+        </a>
+        .
+      </p>
     </footer>
   );
 }
